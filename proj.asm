@@ -5,26 +5,29 @@ main EQU start@0
 .data
     startTime DWORD ?
     curTime DWORD ?
-    timeLeft DWORD 60
+    timeLeft DWORD 30
     count DWORD 0
     ranNum DWORD ?
     score DWORD 0
+    timeDisplayMsg BYTE "TIME: ",0
+    inputKeyAscii WORD ?
 
 .code
 main PROC
     call PrintStartMsg
     call InitHandle
 
+    call Clrscr
     mov ecx, 5
-GeneratePines:
+GeneratePinesPos:
     call RandomPineRow
-    loop GeneratePines
+    loop GeneratePinesPos
 
     call PrintPineRows
-    call HandleKeyboard
 
     call GetMseconds
     mov startTime, eax
+    INVOKE Println, OFFSET timeDisplayMsg
 GAMESTART:
     call GetMseconds
     mov curTime, eax
@@ -35,10 +38,7 @@ ONESECOND:
     mov eax, curTime
     mov startTime, eax              ; update startTime
     dec timeLeft                    ; timeLeft--
-    mov eax, timeLeft
-        ;call Clrscr
-    call WriteDec                   ; print timeLeft
-    mov  dl, 7                      ; column
+    mov  dl, 6                      ; column
     mov  dh, 0                      ; row
     .IF timeLeft == 9
         call Gotoxy
@@ -46,41 +46,54 @@ ONESECOND:
         call WriteChar
     .ENDIF
     .IF timeLeft < 10
-        ;add dl, 1
+        add dl, 1
     .ENDIF
     call Gotoxy
     mov eax, timeLeft
-        ;call WriteDec                   ; print timeLeft
-    call Crlf
+    call WriteDec                   ; print timeLeft
+    ; call Crlf
     jmp ENDLABEL
 ENDLABEL:
-        mov eax, timeLeft
-        cmp eax, 0                      ; if timeLeft > 0
-        jne GAMESTART                   ; goto GAMESTART
-        mov eax,score
-        call WriteDec
-        
-        call PrintEndMsg
-        call WaitMsg
-        exit
+    DetectKeyEvent:
+        call ReadKey
+        jz EndKeyEvent
+        mov inputKeyAscii, ax
+        call HandleKeyboard
+    EndKeyEvent:
+
+    mov eax, timeLeft
+    cmp eax, 0                      ; if timeLeft > 0
+    jne GAMESTART                   ; goto GAMESTART
+    
+EndPage:
+    call Clrscr
+    mov eax, score
+    call WriteDec
+    call Crlf
+    
+    call PrintEndMsg
+    INVOKE Sleep, 3000
+    call WaitMsg
+    exit
 
 main ENDP
 
-HandleKeyboard PROC USES eax ebx edx
+HandleKeyboard PROC USES ebx edx
 ReadPosition:
-    call GetPinePosition ; edx = pinePosition
-    mov bl, [edx]
+    call GetPinePosition    ; edx = pinePosition
+    mov bl, [edx]           ; bl = cur pine position
 
 ReadUserInput:
-    call ReadChar
+    ; call ReadChar
+    mov ax, inputKeyAscii
     .IF bl == "0"
         .IF ax == 4B00h ; LEFT
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
-            jmp ReadPosition
+            ; jmp ReadPosition
         .ELSE
             INVOKE PrintWhitePine
-            jmp ReadUserInput
+            ; jmp ReadUserInput
         .ENDIF
 	.ENDIF
 
@@ -88,10 +101,10 @@ ReadUserInput:
         .IF ax == 5000h ; DOWN
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
-            jmp ReadPosition
+            ; jmp ReadPosition
         .ELSE
             INVOKE PrintWhitePine
-            jmp ReadUserInput
+            ; jmp ReadUserInput
         .ENDIF
 	.ENDIF
 
@@ -99,10 +112,10 @@ ReadUserInput:
         .IF ax == 4D00h ; RIGHT
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
-            jmp ReadPosition
+            ; jmp ReadPosition
         .ELSE
             INVOKE PrintWhitePine
-            jmp ReadUserInput
+            ; jmp ReadUserInput
         .ENDIF
 	.ENDIF
 
