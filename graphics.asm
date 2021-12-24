@@ -145,6 +145,15 @@ GetPinePosition PROC
     ret
 GetPinePosition ENDP
 
+Println PROC,
+    strptr: PTR BYTE,
+
+    mov edx, strptr
+    call WriteString
+    call Crlf
+    ret
+Println ENDP
+
 PrintStartMsg PROC USES edx
     mov edx, OFFSET startGameMsg
     call WriteString
