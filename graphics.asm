@@ -1,6 +1,32 @@
 INCLUDE graphics.inc
 
 .data
+    PA0 BYTE "******    **       *      * *      ***********",0
+    PA1 BYTE "*    *   *  *      *     ** **     *    *    *",0
+    PA2 BYTE "*    *  *    *   *****  **   **    ***********",0
+    PA3 BYTE "*    * *      *    *      **       *    *    *",0
+    PA4 BYTE "****** * **** *   ***    **        ***********",0
+    PA5 BYTE "*      *      *   ***    **             *     ",0
+    PA6 BYTE "*      *      *  * * *  **   **    ***********",0
+    PA7 BYTE "*      *      *  * * *  **    **      * * *   ",0
+    PA8 BYTE "*      *      *  * * *  **    **      * * *   ",0
+    PA9 BYTE "*      *      *    *   **********  ***  *  ***",0
+    start1 BYTE " _____________________ ",0
+    start2 BYTE "| ___ ___  _   __ ___ |",0
+    start3 BYTE "| |__  |  /_\ |__| |  |",0
+    start4 BYTE "| ___| | /   \|  \ |  |",0
+    start5 BYTE "|_____________________|",0
+    rule0 BYTE " __________________________________ ",0
+    rule1 BYTE "|                                  |",0
+    rule2 BYTE "|               RULE               |",0
+    rule3 BYTE "|                                  |",0
+    rule4 BYTE "| 1. Press Space to Start          |",0
+    rule5 BYTE "| 2. Use Arrow Key to Play         |",0
+    rule6 BYTE "| 3. Hit Pine cones and Get Points |",0
+    rule7 BYTE "| 4. 30 seconds only               |",0
+    rule8 BYTE "| 5. Do Your Best!!!               |",0
+    rule9 BYTE "|__________________________________|",0
+
     PineCone0 BYTE "           ", 0
     PineCone1 BYTE "     *     ", 0
     PineCone2 BYTE "  *******  ", 0
@@ -12,21 +38,18 @@ INCLUDE graphics.inc
     PineCone8 BYTE "  *******  ", 0
     PineCone9 BYTE "  *******  ", 0
     PineCone10 BYTE "   *****   ", 0
-    arrow0 BYTE " _____________   _____________   _____________ ", 0
-    arrow1 BYTE "|             | |             | |             |", 0
-    arrow2 BYTE "|     *       | |      *      | |       *     |", 0
-    arrow3 BYTE "|    **       | |     ***     | |       **    |", 0
-    arrow4 BYTE "|   ********  | |   *******   | |  ********   |", 0
-    arrow5 BYTE "|  *********  | |  *********  | |  *********  |", 0
-    arrow6 BYTE "|   ********  | |     ***     | |  ********   |", 0
-    arrow7 BYTE "|    **       | |     ***     | |       **    |", 0
-    arrow8 BYTE "|     *       | |     ***     | |       *     |", 0
-    arrow9 BYTE "|_____________| |_____________| |_____________|", 0
-    score1 BYTE " __________________ ", 0
-    score2 BYTE "|  _  _  _   _   _ |", 0
-    score3 BYTE "| |_ |  | | |_| |_ |", 0
-    score4 BYTE "|  _||_ |_| | \ |_ |", 0
-    score5 BYTE "|__________________|", 0
+    arrow1 BYTE "      *               ***              *      ", 0
+    arrow2 BYTE "     **               ***              **     ", 0
+    arrow3 BYTE "    ********          ***         ********    ", 0
+    arrow4 BYTE "   *********       *********      *********   ", 0
+    arrow5 BYTE "    ********        *******       ********    ", 0
+    arrow6 BYTE "     **               ***              **     ", 0
+    arrow7 BYTE "      *                *               *      ", 0
+    score1 BYTE " ________________ ", 0
+    score2 BYTE "|  _  _  _  _  _ |", 0
+    score3 BYTE "| |_ |  | ||_||_ |", 0
+    score4 BYTE "|  _||_ |_|| \|_ |", 0
+    score5 BYTE "|________________|", 0
     num01 BYTE "*****",0
     num02 BYTE "*   *",0
     num03 BYTE "*   *",0
@@ -80,15 +103,38 @@ INCLUDE graphics.inc
     startGameMsg BYTE "GAME START!",0
     endGameMsg BYTE "TIME'S UP!",0
     checkMsg BYTE "CHECK!",0
+    againStr BYTE "1. Press space to restart",0
+    exitStr BYTE "2. Press esc to exit",0
+
+    paPosition COORD <2,3>
+    paWidth DWORD 46
+    startBoxPosition COORD <13, 18>
+    startBoxWidth DWORD 23
+    rulePosition COORD <8, 24>
+    ruleWidth DWORD 36
+    pineconePosition COORD <5, 35>
+    pineconePosition2 COORD <33, 35>
     picWidth DWORD 11
     picHeight DWORD 7
     pinePosition BYTE "99999",0
-    xyPosition COORD<0,0>
-    arrowPosition COORD<1,43>
+    xyPosition COORD<4,0>
+    arrowPosition COORD<2,43>
     arrowWidth DWORD 47
     scorePosition COORD <15,5>
-    scoreWidth DWORD 20
+    scoreWidth DWORD 18
     numWidth DWORD 5
+    againStrPos COORD <13,25>
+    againStrWidth DWORD 25
+    exitStrPos COORD <13,28>
+    exitStrWidth DWORD 20
+
+    divisor WORD 10
+    quotient WORD 1 DUP(?)
+    remainder WORD 1 DUP(?)
+    scorePos COORD <42,15>
+    nums DWORD 0
+
+
     outputHandle DWORD 0
     count DWORD 0
 
@@ -99,11 +145,72 @@ InitHandle PROC USES eax
     ret
 InitHandle ENDP
 
+PrintPA PROC
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA0, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1;
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA1, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA2, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA3, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA4, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA5, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA6, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA7, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA8, paWidth, paPosition, ADDR count
+    add paPosition.Y, 1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA9, paWidth, paPosition, ADDR count
+ret
+PrintPA ENDP
+
+PrintStartBox PROC
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR start1, startBoxWidth, startBoxPosition, ADDR count
+    add startBoxPosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR start2, startBoxWidth, startBoxPosition, ADDR count
+    add startBoxPosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR start3, startBoxWidth, startBoxPosition, ADDR count
+    add startBoxPosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR start4, startBoxWidth, startBoxPosition, ADDR count
+    add startBoxPosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR start5, startBoxWidth, startBoxPosition, ADDR count
+
+ret
+PrintStartBox ENDP
+
+PrintRule PROC
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule0, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule1, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule2, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule3, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule4, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule5, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule6, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule7, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule8, ruleWidth, rulePosition, ADDR count
+    add rulePosition.Y,1
+    INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule9, ruleWidth, rulePosition, ADDR count
+
+ret
+PrintRule ENDP
+
 PrintPineRow PROC USES edx,
     col: BYTE,
     isWhite: BYTE,
     printPosition: COORD
-    
+
     .IF col == "0"
         INVOKE PrintPine, isWhite, printPosition
         add printPosition.X, 16
@@ -283,8 +390,6 @@ StrRemove ENDP
 
 PrintArrow PROC
 
-    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow0,arrowWidth,arrowPosition,ADDR count
-    inc arrowPosition.Y
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow1,arrowWidth,arrowPosition,ADDR count
     inc arrowPosition.Y
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow2,arrowWidth,arrowPosition,ADDR count
@@ -298,13 +403,24 @@ PrintArrow PROC
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow6,arrowWidth,arrowPosition,ADDR count
     inc arrowPosition.Y
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow7,arrowWidth,arrowPosition,ADDR count
-    inc arrowPosition.Y
-    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow8,arrowWidth,arrowPosition,ADDR count
-    inc arrowPosition.Y
-    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow9,arrowWidth,arrowPosition,ADDR count
 
 	ret
 PrintArrow ENDP
+
+
+PrintScoreBox PROC
+    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score1,scoreWidth,scorePosition,ADDR count
+        inc scorePosition.Y
+    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score2,scoreWidth,scorePosition,ADDR count
+        inc scorePosition.Y
+    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score3,scoreWidth,scorePosition,ADDR count
+        inc scorePosition.Y
+    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score4,scoreWidth,scorePosition,ADDR count
+        inc scorePosition.Y
+    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score5,scoreWidth,scorePosition,ADDR count
+
+    ret
+PrintScoreBox ENDP
 
 Print0 PROC,
     numPosition: COORD
@@ -466,41 +582,73 @@ Print9 PROC,
     ret
 Print9 ENDP
 
+Divide PROC USES edx eax,
+    dend: WORD,
+    sor: WORD,
+    quot: WORD,
+    rem: WORD
+
+    mov dx, 0
+    mov ax, dend
+    div sor
+    mov quotient, ax
+    mov remainder, dx
+    ret
+Divide ENDP
+
+
+PrintFinalScore PROC USES ecx ebx eax,
+    finalScore: WORD
+
+    mov ecx, 5
+    mov bx, finalScore
+    mov quotient, bx
+    mov eax, 0
+PrintScore:
+    push ecx
+    INVOKE Divide, quotient, divisor, quotient, remainder
+    sub scorePos.X, 6
+    INVOKE PrintNum, remainder, scorePos
+    pop ecx
+    LOOP PrintScore
+ret
+PrintFinalScore ENDP
+
 PrintNum PROC,
     num: WORD,
     numPosition: COORD
-    .IF num==0
+    .IF num == 0
         INVOKE Print0, numPosition
-    .ENDIF
-    .IF num==1
+    .ELSEIF num == 1
         INVOKE Print1, numPosition
-    .ENDIF
-    .IF num==2
+    .ELSEIF num == 2
         INVOKE Print2, numPosition
-    .ENDIF
-    .IF num==3
+    .ELSEIF num == 3
         INVOKE Print3, numPosition
-    .ENDIF
-    .IF num==4
+    .ELSEIF num == 4
         INVOKE Print4, numPosition
-    .ENDIF
-    .IF num==5
+    .ELSEIF num == 5
         INVOKE Print5, numPosition
-    .ENDIF
-    .IF num==6
+    .ELSEIF num == 6
         INVOKE Print6, numPosition
-    .ENDIF
-    .IF num==7
+    .ELSEIF num == 7
         INVOKE Print7, numPosition
-    .ENDIF
-    .IF num==8
+    .ELSEIF num == 8
         INVOKE Print8, numPosition
-    .ENDIF
-    .IF num==9
+    .ELSEIF num == 9
         INVOKE Print9, numPosition
     .ENDIF
-
-ret
-
+    ret
 PrintNum ENDP
+
+PrintAgainMsg PROC
+    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR againStr,againStrWidth,againStrPos,ADDR count
+    ret
+PrintAgainMsg ENDP
+
+PrintExitMsg PROC
+    INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR exitStr,exitStrWidth,exitStrPos,ADDR count
+    ret
+PrintExitMsg ENDP
+
 END

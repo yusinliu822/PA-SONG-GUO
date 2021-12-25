@@ -7,18 +7,21 @@ main EQU start@0
     timeLeft DWORD 30
     count DWORD 0
     ranNum DWORD ?
-    score DWORD 0
+    score WORD 0
     timeDisplayMsg BYTE "TIME: ",0
     scoreDisplayMsg BYTE "SCORE: ",0
 
 .code
-main PROC
-    call PrintStartMsg
+main PROC    
     call InitHandle
-
+StartPage:
     call Clrscr
-    mov ecx, 5
-GeneratePinesPos:
+    INVOKE PrintStartPage
+GamePage:
+    call Clrscr
+    mov ecx, 5    
+    INVOKE PrintArrow
+GeneratePinesPos:  
     call RandomPineRow
     loop GeneratePinesPos
 
@@ -27,10 +30,15 @@ GeneratePinesPos:
     call GetMseconds
     mov prevTime, eax
     INVOKE Println, OFFSET timeDisplayMsg
-    INVOKE Println, OFFSET scoreDisplayMsg
-    mov eax, score
-    mov  dl, 6                      ; column
-    mov  dh, 1                      ; row
+    mov  dl, 33                      ; column
+    mov  dh, 0                      ; row
+    call Gotoxy
+    mov edx, OFFSET scoreDisplayMsg
+    call WriteString
+
+    movzx eax, score
+    mov  dl, 40                      ; column
+    mov  dh, 0                      ; row
     call Gotoxy
     call WriteDec
 
@@ -56,13 +64,16 @@ GameLoop:
     
 EndPage:
     call Clrscr
-    mov eax, score
-    call WriteDec
-    call Crlf
     
-    call PrintEndMsg
-    INVOKE PrintEndPage
+    INVOKE PrintEndPage, score
     INVOKE Sleep, 3000
+    call ReadChar
+    .IF ax == 3920h ; SPACE
+        jmp GamePage
+    .ENDIF
+    .IF ax == 011Bh ; ESC
+        jmp StartPage
+    .ENDIF
     call WaitMsg
     exit
 
@@ -136,11 +147,11 @@ HandleKeyboard ENDP
 
 
 CalScore PROC USES eax edx
-    mov eax,score
+    movzx eax,score
     add eax,50
-    mov score,eax
-    mov  dl, 6                      ; column
-    mov  dh, 1                      ; row
+    mov score,ax
+    mov  dl, 40                      ; column
+    mov  dh, 0                      ; row
     call Gotoxy
     call WriteDec
     ret
