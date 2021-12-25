@@ -8,8 +8,6 @@ main EQU start@0
 .data
     prevTime DWORD 0
     timeLeft DWORD 30
-    count DWORD 0
-    ranNum DWORD ?
     timeDisplayMsg BYTE "TIME: ",0
     scoreDisplayMsg BYTE "SCORE: ",0
 
