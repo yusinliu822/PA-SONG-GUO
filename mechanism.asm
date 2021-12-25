@@ -6,6 +6,12 @@ INCLUDE mechanism.inc
     score WORD 0
 
 .code
+ClearScoreValue PROC USES eax
+    mov ax, 0
+    mov score, ax
+    ret
+ClearScoreValue ENDP
+
 CalScore PROC USES eax edx
     movzx eax, score
     add eax, 50

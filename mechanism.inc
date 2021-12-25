@@ -1,3 +1,4 @@
+ClearScoreValue PROTO
 CalScore PROTO
 UpdateScore PROTO
 GetScoreValueInAx PROTO

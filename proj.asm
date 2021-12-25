@@ -19,6 +19,7 @@ StartPage:
     INVOKE PrintStartPage
 GamePage:
     call Clrscr
+    call InitArguments
     INVOKE PrintArrow
     mov ecx, 5
 GeneratePinesPos:  
@@ -62,7 +63,7 @@ EndPage:
     
     call GetScoreValueInAx
     INVOKE PrintEndPage, ax
-    INVOKE Sleep, 3000
+    ; INVOKE Sleep, 3000
     call ReadChar
     .IF ax == 3920h ; SPACE
         jmp GamePage
@@ -74,6 +75,13 @@ EndPage:
     exit
 
 main ENDP
+
+InitArguments PROC USES eax
+    mov eax, 30
+    mov timeLeft, eax
+    call ClearScoreValue
+    ret
+InitArguments ENDP
 
 UpdateTimer PROC USES eax edx
     dec timeLeft                    ; timeLeft--
