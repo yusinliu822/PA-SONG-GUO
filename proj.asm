@@ -9,6 +9,7 @@ main EQU start@0
     ranNum DWORD ?
     score DWORD 0
     timeDisplayMsg BYTE "TIME: ",0
+    scoreDisplayMsg BYTE "SCORE: ",0
 
 .code
 main PROC
@@ -26,6 +27,12 @@ GeneratePinesPos:
     call GetMseconds
     mov prevTime, eax
     INVOKE Println, OFFSET timeDisplayMsg
+    INVOKE Println, OFFSET scoreDisplayMsg
+    mov eax, score
+    mov  dl, 6                      ; column
+    mov  dh, 1                      ; row
+    call Gotoxy
+    call WriteDec
 
 GameLoop:
     DetectKeyEvent:
@@ -90,6 +97,7 @@ ReadUserInput:
         .IF ax == 4B00h ; LEFT
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
+            call CalScore
             ; jmp ReadPosition
         .ELSE
             INVOKE PrintWhitePine
@@ -100,6 +108,7 @@ ReadUserInput:
         .IF ax == 5000h ; DOWN
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
+            call CalScore
             ; jmp ReadPosition
         .ELSE
             INVOKE PrintWhitePine
@@ -110,6 +119,7 @@ ReadUserInput:
         .IF ax == 4D00h ; RIGHT
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
+            call CalScore
             ; jmp ReadPosition
         .ELSE
             INVOKE PrintWhitePine
@@ -125,10 +135,15 @@ ReadUserInput:
 HandleKeyboard ENDP
 
 
-calscore PROC uses eax
-    mov eax, score
-    add eax, 50
-    mov score, eax
-calscore ENDP
+CalScore PROC USES eax edx
+    mov eax,score
+    add eax,50
+    mov score,eax
+    mov  dl, 6                      ; column
+    mov  dh, 1                      ; row
+    call Gotoxy
+    call WriteDec
+    ret
+CalScore ENDP
 
 END main
