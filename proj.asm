@@ -1,4 +1,4 @@
-INCLUDE graphics.inc
+INCLUDE page.inc
 
 main EQU start@0
 
@@ -72,6 +72,7 @@ EndPage:
     call Crlf
     
     call PrintEndMsg
+    INVOKE PrintEndPage
     INVOKE Sleep, 3000
     call WaitMsg
     exit
