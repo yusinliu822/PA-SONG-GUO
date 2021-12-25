@@ -1,4 +1,7 @@
+INCLUDE Irvine32.inc
+INCLUDE graphics.inc
 INCLUDE page.inc
+INCLUDE mechanism.inc
 
 main EQU start@0
 
@@ -7,7 +10,6 @@ main EQU start@0
     timeLeft DWORD 30
     count DWORD 0
     ranNum DWORD ?
-    score WORD 0
     timeDisplayMsg BYTE "TIME: ",0
     scoreDisplayMsg BYTE "SCORE: ",0
 
@@ -19,8 +21,8 @@ StartPage:
     INVOKE PrintStartPage
 GamePage:
     call Clrscr
-    mov ecx, 5    
     INVOKE PrintArrow
+    mov ecx, 5
 GeneratePinesPos:  
     call RandomPineRow
     loop GeneratePinesPos
@@ -33,14 +35,9 @@ GeneratePinesPos:
     mov  dl, 33                      ; column
     mov  dh, 0                      ; row
     call Gotoxy
-    mov edx, OFFSET scoreDisplayMsg
-    call WriteString
+    INVOKE Println, OFFSET scoreDisplayMsg
 
-    movzx eax, score
-    mov  dl, 40                      ; column
-    mov  dh, 0                      ; row
-    call Gotoxy
-    call WriteDec
+    call UpdateScore
 
 GameLoop:
     DetectKeyEvent:
@@ -65,7 +62,8 @@ GameLoop:
 EndPage:
     call Clrscr
     
-    INVOKE PrintEndPage, score
+    call GetScoreValueInAx
+    INVOKE PrintEndPage, ax
     INVOKE Sleep, 3000
     call ReadChar
     .IF ax == 3920h ; SPACE
@@ -109,10 +107,9 @@ ReadUserInput:
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
             call CalScore
-            ; jmp ReadPosition
+            call UpdateScore
         .ELSE
             INVOKE PrintWhitePine
-            ; jmp ReadUserInput
         .ENDIF
 
 	.ELSEIF bl == "1"
@@ -120,10 +117,9 @@ ReadUserInput:
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
             call CalScore
-            ; jmp ReadPosition
+            call UpdateScore
         .ELSE
             INVOKE PrintWhitePine
-            ; jmp ReadUserInput
         .ENDIF
 
 	.ELSEIF bl == "2"
@@ -131,10 +127,9 @@ ReadUserInput:
             call RandomPineRow     ; create new line pinecone
             call PrintPineRows
             call CalScore
-            ; jmp ReadPosition
+            call UpdateScore
         .ELSE
             INVOKE PrintWhitePine
-            ; jmp ReadUserInput
         .ENDIF
 	.ENDIF
 
@@ -146,15 +141,5 @@ ReadUserInput:
 HandleKeyboard ENDP
 
 
-CalScore PROC USES eax edx
-    movzx eax,score
-    add eax,50
-    mov score,ax
-    mov  dl, 40                      ; column
-    mov  dh, 0                      ; row
-    call Gotoxy
-    call WriteDec
-    ret
-CalScore ENDP
 
 END main

@@ -1,0 +1,3 @@
+CalScore PROTO
+UpdateScore PROTO
+GetScoreValueInAx PROTO

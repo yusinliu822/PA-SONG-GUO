@@ -1,3 +1,4 @@
+INCLUDE Irvine32.inc
 INCLUDE graphics.inc
 
 .data

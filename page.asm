@@ -1,4 +1,4 @@
-
+INCLUDE Irvine32.inc
 INCLUDE graphics.inc
 
 main	EQU start@0
@@ -27,24 +27,24 @@ PrintEndPage PROC,
 ; Print exit message
     INVOKE PrintExitMsg
 
-; å°ä¸‹é¢å…©é¡†æ¾æœ
+; ¦L¤U­±¨âÁûªQªG
     INVOKE PrintPine, 0, pineconePosition
     INVOKE PrintPine, 0, pineconePosition2
 
-    ; æŒ‰ç©ºç™½éµæœƒæ¸…é™¤ç•«é¢ï¼ˆå¯ä»¥æ¥é–‹å§‹éŠæˆ²ï¼‰
+    ; «öªÅ¥ÕÁä·|²M°£µe­±¡]¥i¥H±µ¶}©l¹CÀ¸¡^
 
 
 ret
 PrintEndPage ENDP
 
 PrintStartPage PROC
-; å°PAæ¾æœ
+; ¦LPAªQªG
     INVOKE PrintPA
 ; print start box
     INVOKE PrintStartBox
 ; print rule
     INVOKE PrintRule
-; å°ä¸‹é¢å…©é¡†æ¾æœ
+; ¦L¤U­±¨âÁûªQªG
     INVOKE PrintPine, 0, pineconePosition
     INVOKE PrintPine, 0, pineconePosition2
 

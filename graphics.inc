@@ -1,5 +1,3 @@
-INCLUDE Irvine32.inc
-
 StrRemove PROTO, pStart: PTR BYTE
 InitHandle PROTO
 RandomPineRow PROTO
