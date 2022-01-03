@@ -147,6 +147,8 @@ InitHandle PROC USES eax
 InitHandle ENDP
 
 PrintPA PROC
+    mov paPosition.X,2
+    mov paPosition.Y,3
     INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA0, paWidth, paPosition, ADDR count
     add paPosition.Y, 1;
     INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR PA1, paWidth, paPosition, ADDR count
@@ -170,6 +172,8 @@ ret
 PrintPA ENDP
 
 PrintStartBox PROC
+    mov startBoxPosition.X,15
+    mov startBoxPosition.Y,18
     INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR start1, startBoxWidth, startBoxPosition, ADDR count
     add startBoxPosition.Y,1
     INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR start2, startBoxWidth, startBoxPosition, ADDR count
@@ -184,6 +188,8 @@ ret
 PrintStartBox ENDP
 
 PrintRule PROC
+    mov rulePosition.X,8
+    mov rulePosition.Y,24
     INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule0, ruleWidth, rulePosition, ADDR count
     add rulePosition.Y,1
     INVOKE WriteConsoleOutputCharacter, outputHandle, ADDR rule1, ruleWidth, rulePosition, ADDR count
@@ -315,6 +321,7 @@ PrintWhitePine PROC
     mov edx, OFFSET pinePosition
     mov bl, [edx]
     INVOKE PrintPineRow, bl, 1, xyPosition
+    INVOKE Sleep, 500
 PrintWhitePine ENDP
 
 ; stores the pointer to pinePosition in edx
@@ -390,7 +397,8 @@ Exit_proc:
 StrRemove ENDP
 
 PrintArrow PROC
-
+    mov arrowPosition.X, 2
+    mov arrowPosition.Y, 43
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow1,arrowWidth,arrowPosition,ADDR count
     inc arrowPosition.Y
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR arrow2,arrowWidth,arrowPosition,ADDR count
@@ -410,6 +418,8 @@ PrintArrow ENDP
 
 
 PrintScoreBox PROC
+    mov scorePosition.X, 15
+    mov scorePosition.Y, 5
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score1,scoreWidth,scorePosition,ADDR count
         inc scorePosition.Y
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score2,scoreWidth,scorePosition,ADDR count
@@ -600,7 +610,8 @@ Divide ENDP
 
 PrintFinalScore PROC USES ecx ebx eax,
     finalScore: WORD
-
+    mov scorePos.X, 42
+    mov scorePos.Y, 15
     mov ecx, 5
     mov bx, finalScore
     mov quotient, bx

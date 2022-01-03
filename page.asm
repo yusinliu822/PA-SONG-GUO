@@ -3,23 +3,17 @@ INCLUDE graphics.inc
 
 main	EQU start@0
 
-
 .data
 
 pineconePosition COORD <5, 35>
 pineconePosition2 COORD <33, 35>
 
-
 .code
-
-
 
 PrintEndPage PROC,
     finalScore:WORD
-
 ; Print Score Box
     INVOKE PrintScoreBox
-
     INVOKE PrintFinalScore, finalScore
 
 ; Print again message
@@ -32,9 +26,7 @@ PrintEndPage PROC,
     INVOKE PrintPine, 0, pineconePosition2
 
     ; 按空白鍵會清除畫面（可以接開始遊戲）
-
-
-ret
+    ret
 PrintEndPage ENDP
 
 PrintStartPage PROC
@@ -47,9 +39,11 @@ PrintStartPage PROC
 ; 印下面兩顆松果
     INVOKE PrintPine, 0, pineconePosition
     INVOKE PrintPine, 0, pineconePosition2
+    mov dl,13
+    mov dh,28
+    call Gotoxy
+    call WaitMsg
 
-    Call WaitMsg
-
-ret
+    ret
 PrintStartPage ENDP
 END

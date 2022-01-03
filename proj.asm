@@ -10,6 +10,7 @@ main EQU start@0
     timeLeft DWORD 30
     timeDisplayMsg BYTE "TIME: ",0
     scoreDisplayMsg BYTE "SCORE: ",0
+    quit WORD 0
 
 .code
 main PROC    
@@ -45,6 +46,9 @@ GameLoop:
         call ReadKey
         jz CheckTime
         call HandleKeyboard
+        .IF quit == 1
+            jmp EndPage
+        .ENDIF
     CheckTime:
         call GetMseconds ; now = eax
         mov ebx, eax
@@ -64,19 +68,23 @@ EndPage:
     call GetScoreValueInAx
     INVOKE PrintEndPage, ax
     ; INVOKE Sleep, 3000
+WaitForMove:
     call ReadChar
     .IF ax == 3920h ; SPACE
         jmp GamePage
-    .ENDIF
-    .IF ax == 011Bh ; ESC
+    .ElSEIF ax == 011Bh ; ESC
         jmp StartPage
+    .ELSE
+        jmp WaitForMove
     .ENDIF
-    call WaitMsg
+
     exit
 
 main ENDP
 
 InitArguments PROC USES eax
+    mov ax, 0
+    mov quit, ax
     mov eax, 30
     mov timeLeft, eax
     call ClearScoreValue
@@ -108,6 +116,10 @@ ReadPosition:
     mov bl, [edx]           ; bl = cur pine position
 
 ReadUserInput:
+    .IF ax == 011Bh ;ESC
+		mov quit, 1
+		jmp EndGame
+	.ENDIF
     .IF bl == "0"
         .IF ax == 4B00h ; LEFT
             call RandomPineRow     ; create new line pinecone
@@ -139,9 +151,7 @@ ReadUserInput:
         .ENDIF
 	.ENDIF
 
-	;.IF ax == 011Bh ;ESC
-	;	jmp END_FUNC
-	;.ENDIF
+EndGame:
 
     ret
 HandleKeyboard ENDP
