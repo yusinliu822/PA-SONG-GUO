@@ -1,6 +1,6 @@
 # PA-SONG-GUO
-- test by min
-- 12345
-- test yusin
-- 98765
-- 11111
+- Press any key to continue
+- Use Arrow key to Play
+- Hit Pine Cones and Get Points
+- 30 seconds only
+- Do Your Best!!!
