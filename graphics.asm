@@ -121,7 +121,7 @@ INCLUDE graphics.inc
     xyPosition COORD<4,0>
     arrowPosition COORD<2,43>
     arrowWidth DWORD 47
-    scorePosition COORD <15,5>
+    scorePosition COORD <17,5>
     scoreWidth DWORD 18
     numWidth DWORD 5
     againStrPos COORD <13,25>
@@ -418,7 +418,7 @@ PrintArrow ENDP
 
 
 PrintScoreBox PROC
-    mov scorePosition.X, 15
+    mov scorePosition.X, 17
     mov scorePosition.Y, 5
     INVOKE WriteConsoleOutputCharacter,outputHandle,ADDR score1,scoreWidth,scorePosition,ADDR count
         inc scorePosition.Y
